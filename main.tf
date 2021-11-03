@@ -97,7 +97,7 @@ resource "azurerm_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = file("~/.ssh/id_rsa.pub")
+      key_data = data.azurerm_key_vault_secret.secret.value
        path     = "/home/shahars/.ssh/authorized_keys"
     }   
   }   
@@ -133,32 +133,6 @@ resource "azurerm_virtual_machine" "test" {
  
  
  
-  # storage_os_disk {
-  #   name              = "myosdisk${count.index +1}"
-  #   caching           = "ReadWrite"
-  #   create_option     = "FromImage"
-  #   managed_disk_type = "Standard_LRS"
-  # }
-  
-  # storage_image_reference {
-  #   publisher = "Canonical"
-  #   offer     = "UbuntuServer"
-  #   sku       = "16.04-LTS"
-  #   version   = "latest"
-  # }  
-  # os_profile {
-  #   computer_name  = "hostname"
-  #   admin_username = "shahars"
-  # }
-  
-  # os_profile_linux_config {
-  #   disable_password_authentication = true
-  #   # ssh_keys {
-    #   key_data = file("~/.ssh/id_rsa.pub")
-    #   path = "/home/shahars/.ssh/authorized_keys"
-    # }
-  
-  #}
 
    
   
@@ -211,35 +185,35 @@ resource "azurerm_virtual_machine" "test" {
 #############################################################################
 
 
-data "azurerm_virtual_network" "shaharbastion" {
-  name                = "bastion1"
-  resource_group_name = "bastion1"
-}
+# data "azurerm_virtual_network" "shaharbastion" {
+#   name                = "bastion1"
+#   resource_group_name = "bastion1"
+# }
 
-data "azurerm_resource_group" "shaharpeering" {
-   name                = "bastion1"
-}
+# data "azurerm_resource_group" "shaharpeering" {
+#    name                = "bastion1"
+# }
 
 
-resource "azurerm_virtual_network_peering" "shaharbastion" {
-  name                      = "peertobastion1"
-  resource_group_name       = azurerm_resource_group.test.name
-  virtual_network_name      = module.test.vnet_name
-  remote_virtual_network_id = data.azurerm_virtual_network.shaharbastion.id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-  allow_gateway_transit = false
-}
+# resource "azurerm_virtual_network_peering" "shaharbastion" {
+#   name                      = "peertobastion1"
+#   resource_group_name       = azurerm_resource_group.test.name
+#   virtual_network_name      = module.test.vnet_name
+#   remote_virtual_network_id = data.azurerm_virtual_network.shaharbastion.id
+#   allow_virtual_network_access = true
+#   allow_forwarded_traffic      = true
+#   allow_gateway_transit = false
+# }
 
-resource "azurerm_virtual_network_peering" "shaharpeering" {
-  name                      = "peertoShaharTF"
-  resource_group_name       = data.azurerm_resource_group.shaharpeering.name
-  virtual_network_name      = data.azurerm_virtual_network.shaharbastion.name
-  remote_virtual_network_id = module.test.vnet_id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-  allow_gateway_transit = false
-}
+# resource "azurerm_virtual_network_peering" "shaharpeering" {
+#   name                      = "peertoShaharTF"
+#   resource_group_name       = data.azurerm_resource_group.shaharpeering.name
+#   virtual_network_name      = data.azurerm_virtual_network.shaharbastion.name
+#   remote_virtual_network_id = module.test.vnet_id
+#   allow_virtual_network_access = true
+#   allow_forwarded_traffic      = true
+#   allow_gateway_transit = false
+# }
 
 #############################################################################
 # LoadBalncer + BackEndPool + LB rules
@@ -359,19 +333,17 @@ data "azurerm_key_vault_secret" "secret" {
 
 
 
-output "virtual_network_id" {
-  value = data.azurerm_virtual_network.shaharbastion.id
-} 
+# output "virtual_network_id" {
+#   value = data.azurerm_virtual_network.shaharbastion.id
+# } 
 
-output "vnet_id" {
-  value = module.test.vnet_id
-}
+# output "vnet_id" {
+#   value = module.test.vnet_id
+# }
 
-output "netwrk_id" {
-  value = azurerm_network_interface.test[0].id
-}
+# output "netwrk_id" {
+#   value = azurerm_network_interface.test[0].id
+# }
 
-output "KeyVault_id" {
-  value = data.azurerm_key_vault.kv.value
-}
+
 
