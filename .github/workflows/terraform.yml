@@ -4,7 +4,7 @@ name: 'TerraforActions'
 on:
   push:
     branches:
-    - main
+    - terraform
   pull_request:
 
 jobs:
